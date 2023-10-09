@@ -1,0 +1,160 @@
+- composer i: instalar las dependencias de composer
+* MIGRACION = TABLA
+** LARAVEL CLI ARTISAN
+    - php artisan serve
+
+    0. Crear migracion (tabla in DB)
+        php artisan make:migration create_users_table
+        php artisan migrate (Correr migraciones)
+            * Correr solo una migracion en específico: php artisan migrate --path=database/migrations/2023_09_08_154426_create_modules_table.php
+            * Eliminar only migracion: php artisan migrate:rollback --path=database/migrations/2023_06_12_185202_create_roles_table.php
+        php artisan migrate --seed (Correr migraciones + seeders)
+
+
+        0.1  Elimina la tablas migradas : php artisan migrate:rollback
+        0.2  Elimina una migracion en especifico: php artisan make:migration drop_table_nombre_de_tabla
+        0.3  Crear un seeder: php artisan make:seeder UsersSeeder
+        0.4 Correr all seeders: php artisan db:seed
+        0.5  Correr only seeder: php artisan db:seed --class=ModulesSeeder
+
+    1. Crear [m]=migración + [cr]=controller resource + [f]=factory + Model(4cosas)
+        php artisan make:model User -mcrf --api
+        php artisan make:model User (MODEL)
+
+    2. Crear controller
+        php artisan make:controller UsersController --resource (CONTROLLER)
+
+    3. Ejecutar un Seeder
+    php artisan db:seed  (Ejecutar todos los seeders)
+    php artisan db:seed --class=SettingsTableSeeder
+
+    4. Ejecutar 'test' con artisan
+        php artisan test
+
+
+
+** CONCEPTOS GENERALES LARAVEL
+    - Factory: Generar data falsa para llenar en las tablas
+    - Laravel usa el algoritmo bcrypt para encriptar password
+    - Creación de 'grupos de rutas' aparació con Laravel 9
+    - return $data; [Funciona como la base de ACS]
+    -  $table->json('badge'); (JSON TRADICIONAL) VS $table->jsonb('badge'); (JSON BINARIO)
+    - tipo de dato en MySql 'bigint unsigned' [unsigned = solo numeros positivos]
+
+** MIGRACIONES
+    $table->timestamps(); => crea 2 campos en la tabla (1 = 'created_at' & 2 = 'updated_at')
+    php artisan make:migration create_users_table
+    php artisan migrate
+
+EXAMPLE
+** https://www.youtube.com/watch?v=XXT48qhMGPw&list=PLaWWlKyA7tY07wzmHTrhKbZNWgPGRqtqp&index=8
+
+create rest api in laravel 10
+
+Ejemplo sistema de venta
+--------------------------------------
+https://www.youtube.com/watch?v=OXseD1FKsU4&list=PLaWWlKyA7tY07wzmHTrhKbZNWgPGRqtqp
+
+
+--------------------------------------
+Laravel 10 Sanctum API Authentication
+--------------------------------------
+- Sanctum usa sha256 para encriptar el token original y almacenar el token encriptado en 'personal_access_tokens'
+- PersonalAccessToken: es un modelo propio de Sanctum
+- personal_access_tokens: Esta tabla es creada y utilizada por Sanctum
+https://www.youtube.com/watch?v=KGVWpgApru8
+https://www.youtube.com/watch?v=DTi_fqbH_aM
+
+
+** ACCEDER A VALORES DE .env
+    $appUrl = env('APP_URL');
+
+** IMPORTANT:
+    En el header es necesario enviar:
+    (1) Accept:             application/json
+    (2) Content-Type:       application/json
+
+** 2 TOKEN GENERA LARAVEL SANCTUM
+  7|HzxtstrL1gc25TjrSUOuSHMuOvEDcTXT0EhLrXQB  (Access Token)
+  7504700806d6c264f083f4868897f091a14c14c38294a787de03e1a5118d067d  (API Token)
+
+* RSP 'not_logged'
+{
+    "ok": false,
+    "msg": "not_logged"
+}
+
+{
+    "message": "Unauthenticated."
+}
+
+composer dump-autoload
+
+REVISAR ESTOS TEMAS
+* Multi-Tenancy
+* Versionamiento de api
+
+
+
+** DOCKER COMMANDS
+ docker-compose up -d  (Ejecutar el file 'docker-compose.yml')
+ docker-compose down   (Detener y eliminar los servicios de docker compose)
+ docker-compose build --no-cache (forzar una construcción sin utilizar la caché, cuando agregas una nueva depencia ejecuta esto)
+ RUN docker-php-ext-install zip
+
+** SWAGGER COMMANDS
+
+-composer require "darkaonline/l5-swagger"
+
+CREAR VARIABLE DE ENTORNO:
+-L5_SWAGGER_GENERATE_ALWAYS = true
+
+PARA LA SIGUIENTE RUTA INSERTAR EL SIGUIENTE CODIGO PARA LA BASE DEL CONTROLADOR
+-App\Http\Controllers\Controller.php
+/**
+ * @OA\Info(
+ *    title="BACKEND-BASE-APP-V-2",
+ *    version="1.0.0",
+ * )
+ */
+
+ Y ALAMENOS EN UNO DE LOS METODOS DE CUALQUIER CONTROLADOR COLOCAR LA SIGUIENTE ANOTACION QUE PUEDE SER PERSONALIZADA, POR EJEMPLO LA SIGUIENTE RUTA:
+ -App\Http\Controllers\admin\AuthController.php
+  /**
+     * @OA\Post(
+     * path="/login",
+     * summary="Sign in",
+     * description="Login by email, password",
+     * operationId="authLogin",
+     * tags={"auth"},
+     * @OA\RequestBody(
+     *    required=true,
+     *    description="Pass user credentials",
+     *    @OA\JsonContent(
+     *       required={"email","password"},
+     *       @OA\Property(property="email", type="string", format="email", example="user1@mail.com"),
+     *       @OA\Property(property="password", type="string", format="password", example="PassWord12345"),
+     *       @OA\Property(property="persistent", type="boolean", example="true"),
+     *    ),
+     * ),
+     * @OA\Response(
+     *    response=422,
+     *    description="Wrong credentials response",
+     *    @OA\JsonContent(
+     *       @OA\Property(property="message", type="string", example="Sorry, wrong email address or password. Please try again")
+     *        )
+     *     )
+     * )
+     */
+
+     php artisan vendor:publish --provider "L5Swagger\L5SwaggerServiceProvider"
+     php artisan l5-swagger:generate
+
+
+     php artisan optimize
+     php artisan config:clear
+
+     php artisan:controller
+
+** SWAGGER COMMANDS
+https://base-backend.gofocus.info/api/public/api/documentation
