@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->integer('id_activity');
             $table->integer('id_maintenance');
+            $table->tinyInteger('state')->default(1);
             $table->timestamps();
         });
     }

@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('type_activities', function (Blueprint $table) {
             $table->id();
             $table->text('type');
+            $table->tinyInteger('state')->default(1);
             $table->timestamps();
         });
     }

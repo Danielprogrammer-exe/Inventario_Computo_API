@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->integer('id_type_activity');
             $table->text('task');
+            $table->tinyInteger('state')->default(1);
             $table->timestamps();
         });
     }

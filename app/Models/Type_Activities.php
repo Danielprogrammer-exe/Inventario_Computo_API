@@ -8,4 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class Type_Activities extends Model
 {
     use HasFactory;
+
+    protected $table = 'type_activities';
+
+    protected $fillable = [
+        'type',
+        'status',
+    ];
 }
