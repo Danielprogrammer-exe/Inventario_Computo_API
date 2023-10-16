@@ -18,6 +18,10 @@ Route::put('/maintenances/{id}/edit',[MaintenancesController::class,'update']);
 Route::get('devices/',[DevicesController::class,'index']);
 Route::get('devices/{id}',[DevicesController::class,'show']);
 
+//API CON BASE DE DATOS DE WALTER
+Route::get('/fixedasset',[FixedassetController::class,'index']);
+Route::get('/fixedasset/{var_codigo}', [FixedassetController::class, 'show']);
+
 //APIS QUE VAN A NECESITAR VALIDACION
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
