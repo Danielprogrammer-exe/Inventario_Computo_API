@@ -159,6 +159,7 @@ return [
         /*
          * Package Service Providers...
          */
+        Spatie\Permission\PermissionServiceProvider::class,  // Esta es la línea que necesitas agregar
 
         /*
          * Application Service Providers...
@@ -169,6 +170,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
     ])->toArray(),
+
 
     /*
     |--------------------------------------------------------------------------

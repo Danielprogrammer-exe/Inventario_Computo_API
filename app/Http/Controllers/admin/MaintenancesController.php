@@ -4,14 +4,43 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Maintenance;
-use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 
 class MaintenancesController extends Controller
 {
 
     public function store(Request $request)
+    {
+        $data = $request->all();
+
+        if (Auth::check()) {
+            $data['name_user'] = Auth::user()->name;
+        } else {
+            return response()->json(['error' => 'No hay usuario autenticado'], 401);
+        }
+
+        $maintenance = Maintenance::create($data);
+        return response()->json($maintenance, 201);
+    }
+
+
+    /*public function index(Request $request)
+    {
+        $from = $request->input('from');
+        $to = $request->input('to');
+
+        $maintenances = Maintenance::whereBetween('date_created', [$from, $to])->get();
+
+        return response()->json($maintenances);
+    }*/
+
+
+
+
+
+
+    /*public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'id_device' => 'required|integer',
@@ -46,7 +75,7 @@ class MaintenancesController extends Controller
     }
 
     //AGREGAR PARAMETROS DE FECHAS
-    /*public function show(Maintenance $maintenance){
+    public function show(Maintenance $maintenance){
         $maintenance = Maintenance::find($maintenance);
         if($maintenance){
             return response()->json([
@@ -59,7 +88,7 @@ class MaintenancesController extends Controller
                 'message'=>'No hay mantenimientos en este rango de fechas'
             ],404);
         }
-    }*/
+    }
 
     public function edit($id)
     {
@@ -125,5 +154,6 @@ class MaintenancesController extends Controller
             'data' => $user,
         ];
         return response()->json($rsp);
-    }
+    }*/
+
 }
