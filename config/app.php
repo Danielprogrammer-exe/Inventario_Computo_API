@@ -159,7 +159,7 @@ return [
         /*
          * Package Service Providers...
          */
-        Spatie\Permission\PermissionServiceProvider::class,  // Esta es la línea que necesitas agregar
+        Spatie\Permission\PermissionServiceProvider::class,
 
         /*
          * Application Service Providers...

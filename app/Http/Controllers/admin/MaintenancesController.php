@@ -145,7 +145,7 @@ class MaintenancesController extends Controller
     }
 
 
-    public function destroy(User $user)
+    public function destroy(Users $user)
     {
         $user->delete();
         $rsp = [

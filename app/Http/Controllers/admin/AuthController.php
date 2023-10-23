@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
+use App\Models\Users;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -13,7 +13,7 @@ class AuthController extends Controller
     function Register(Request $R)
     {
         try {
-            $cred = new User();
+            $cred = new Users();
             $cred->name = $R->name;
             $cred->email = $R->email;
             $cred->password = Hash::make($R->password);
@@ -26,7 +26,7 @@ class AuthController extends Controller
     }
 
     function Login(Request $R){
-        $user = User::where('email', $R->email)->first();
+        $user = Users::where('email', $R->email)->first();
 
         if($user!='[]' && Hash::check($R->password,$user->password)){
             $token = $user->createToken('Personal Access Token')->plainTextToken;
@@ -41,4 +41,23 @@ class AuthController extends Controller
             return response()->json($response);
         }
     }
+
+    public function Logout(Request $request)
+    {
+        try {
+            // Obtener el usuario actual basado en el token
+            $user = $request->user();
+
+            // Revocar el token actual
+            $user->currentAccessToken()->delete();
+
+            $response = ['status' => 200, 'message' => 'Sesión cerrada exitosamente.'];
+            return response()->json($response);
+
+        } catch (Exception $e) {
+            $response = ['status' => 500, 'message' => $e->getMessage()];
+            return response()->json($response);
+        }
+    }
+
 }
