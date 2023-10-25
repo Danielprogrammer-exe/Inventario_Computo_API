@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Users;
+use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -13,7 +13,7 @@ class AuthController extends Controller
     function Register(Request $R)
     {
         try {
-            $cred = new Users();
+            $cred = new User();
             $cred->name = $R->name;
             $cred->email = $R->email;
             $cred->password = Hash::make($R->password);
@@ -27,7 +27,7 @@ class AuthController extends Controller
 
     function Login(Request $R){
         // Buscar usuario por email
-        $user = Users::where('email', $R->email)->first();
+        $user = User::where('email', $R->email)->first();
 
         // Verificar si el usuario existe y si la contraseña es correcta
         if ($user && Hash::check($R->password, $user->password)) {
@@ -45,7 +45,7 @@ class AuthController extends Controller
     {
         try {
             // Obtener el usuario actual basado en el token
-            $user = $request->user();
+            $user = $request->User();
 
             // Revocar el token actual
             $user->currentAccessToken()->delete();

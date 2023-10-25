@@ -3,7 +3,7 @@
 namespace Inc;
 
 use App\Enums\StateEnum;
-use App\Models\Users;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\PersonalAccessToken;
 
