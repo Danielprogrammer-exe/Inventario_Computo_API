@@ -26,20 +26,19 @@ class AuthController extends Controller
     }
 
     function Login(Request $R){
+        // Buscar usuario por email
         $user = Users::where('email', $R->email)->first();
 
-        if($user!='[]' && Hash::check($R->password,$user->password)){
+        // Verificar si el usuario existe y si la contraseña es correcta
+        if ($user && Hash::check($R->password, $user->password)) {
             $token = $user->createToken('Personal Access Token')->plainTextToken;
-            $response = ['status' => 200, 'token' => $token, 'user' => $user, 'message' => 'Bienvenido!'];
-            return response()->json($response);
-        }else if($user=='[]'){
-            $response = ['status' => 500, 'message' => 'Usuario no encontrado'];
-            return response()->json($response);
-
-        }else{
-            $response = ['status' => 500, 'message' => 'Email o contraseña incorrecta'];
-            return response()->json($response);
+            $response = ['success' => true,'status' => 200, 'token' => $token, 'user' => $user, 'message' => 'Bienvenido!'];
+            return response()->json($response, 200);
         }
+
+        // Devolver mensaje de error si el usuario no se encuentra o si la contraseña es incorrecta
+        $response = ['status' => 401, 'message' => 'Credenciales incorrectas'];
+        return response()->json($response, 401);
     }
 
     public function Logout(Request $request)

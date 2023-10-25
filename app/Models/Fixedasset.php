@@ -16,6 +16,6 @@ class Fixedasset extends Model
         'var_marca',
         'var_modelo',
         'var_serie',
-        'idf_subfamiliaactivo'
+        'idf_subfamiliaactivo' // si es impresora, scaner, mouse, laptop, etc
 ];
 }
