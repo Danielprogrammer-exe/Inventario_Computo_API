@@ -16,7 +16,7 @@ return new class extends Migration
             $table->id();
             $table->string('name_user');
             $table->string('code_device');
-            $table->text('observations');
+            $table->text('observations')->nullable();
             $table->string('status')->default('Operativo');
             $table->boolean('soplado_general')->default(false);
             $table->boolean('ventiladores')->default(false);
