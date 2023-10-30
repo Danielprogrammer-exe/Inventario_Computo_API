@@ -82,19 +82,19 @@ class DeviceController extends Controller
         $currentDate = date("Y-m-d");
 
         // Concatenamos el código del dispositivo y la fecha para el QR
-        $qrData = "Code: {$device->code} | Date: {$currentDate}";
+        $qrData = "C:{$device->code} D:{$currentDate}";
 
         // Dinámicamente generar la cadena ZPL
         $zpl_string = "^XA
-       ^FO100,100
-       ^BQN,2,10
-       ^FDMA,{$device->code}^FS
-       ^FO100,300^A0N,50,50^FD{$device->code}^FS
-       ^FO100,400^A0N,50,50^FDBrand: {$device->brand}^FS
-       ^FO100,500^A0N,50,50^FDType: {$device->type_device}^FS
-       ^FO200,600^BQN,2,7
-       ^FDHA,{$qrData}^FS
-       ^XZ";
+        ^FO5,5
+        ^BQN,2,2
+        ^FDMA,{$device->code}^FS
+        ^FO10,30^A0N,10,10^FD{$device->code}^FS
+        ^FO10,50^A0N,10,10^FD{$device->brand}^FS
+        ^FO10,70^A0N,10,10^FD{$device->type_device}^FS
+        ^FO15,90^BQN,2,2
+        ^FDHA,{$qrData}^FS
+        ^XZ";
 
         // Enviar a la impresora (asumiendo conexión de red)
         $fp = fsockopen("192.168.0.219", 9100);
@@ -106,8 +106,5 @@ class DeviceController extends Controller
             return response('Impresión realizada con éxito', 200);
         }
     }
-
-
-
 
 }
