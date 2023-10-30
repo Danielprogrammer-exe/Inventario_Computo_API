@@ -16,6 +16,7 @@ class Device extends Model
         'brand',
         'model',
         'serie',
-        'type_device'
+        'type_device',
+        'status'
     ];
 }

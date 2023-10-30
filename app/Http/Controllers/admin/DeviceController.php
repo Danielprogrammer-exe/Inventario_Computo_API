@@ -6,50 +6,90 @@ use App\Models\Device;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 
 class DeviceController extends Controller
 {
-
-    /*public function store(Request $request)
+    //LISTA TODOS LOS DISPOSITIVOS REGISTRADOS
+    public function index()
     {
-        // Validaciones de los campos
-        $validator = Validator::make($request->all(), [
-            'code' => 'required|unique:devices,code',
-            'brand' => 'required',
-            'model' => 'required',
-            'serie' => 'required',
-            'type_device' => 'required'
-        ]);
+        $devices = DB::table('devices')->get();
+        return response()->json($devices);
+    }
 
-        // Si la validación falla
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 401);
-        }
+    //AGREGA UN DISPOSITIVO A LA TABLA DEVICES
+    public function store(Request $request)
+    {
+        if (Auth::check()) {
+            // Validaciones de los campos, añadiendo el campo 'status'
+            $validator = Validator::make($request->all(), [
+                'code' => 'required|unique:devices,code',
+                'brand' => 'required',
+                'model' => 'required',
+                'serie' => 'required',
+                'type_device' => 'required',
+                'status' => 'required|string'
+            ]);
 
-        // Si pasa la validación
-        $device = Device::create($request->all());
-        return response()->json(['message' => 'Equipo agregado satisfactoriamente', 'data' => $device], 201);
-    }*/
+            if ($validator->fails()) {
+                return response()->json(['error' => $validator->errors()], 401);
+            }
 
-    public function show($code){
-
-        $devices = Device::select('brand', 'model', 'serie','type_device')
-            ->where('code', $code)
-            ->first();  // Usamos first() para obtener el primer registro que coincida
-
-        if($devices){
-            return response()->json([
-                'status'=>200,
-                'devices'=>$devices
-            ],200);
-        }else{
-            return response()->json([
-                'status' =>404,
-                'message' => 'No hay equipo registrado con este código'
-            ],404);
+            $device = Device::create($request->all());
+            return response()->json(['message' => 'Equipo agregado satisfactoriamente', 'data' => $device], 201);
+        } else {
+            return response()->json(['error' => 'No autorizado'], 401);
         }
     }
 
+    public function show($code)
+    {
+        $devices = Device::select('brand', 'model', 'serie','type_device', 'status') // Se añade 'status'
+        ->where('code', $code)
+            ->first();
+
+        if($devices){
+            return response()->json([
+                'status' => 200,
+                'devices' => $devices
+            ], 200);
+        } else {
+            return response()->json([
+                'status' => 404,
+                'message' => 'No hay equipo registrado con este código'
+            ], 404);
+        }
+    }
+
+    public function update(Request $request, $code)
+    {
+        if (Auth::check()) {
+            $device = Device::where('code', $code)->first();
+            if (!$device) {
+                return response()->json(['error' => 'Dispositivo no encontrado'], 404);
+            }
+
+            $validator = Validator::make($request->all(), [
+                'code' => 'sometimes|unique:devices,code,' . $device->id,
+                'brand' => 'sometimes|required',
+                'model' => 'sometimes|required',
+                'serie' => 'sometimes|required',
+                'type_device' => 'sometimes|required',
+                'status' => 'sometimes|required|string' // Se añade 'status'
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json(['error' => $validator->errors()], 400);
+            }
+
+            $device->update($request->all());
+            return response()->json(['message' => 'Dispositivo actualizado exitosamente', 'data' => $device], 200);
+        } else {
+            return response()->json(['error' => 'No autorizado'], 401);
+        }
+    }
+
+    //ELIMINA EL REGISTRO DE UN  DISPOSITIVO EN LA TABLA DEVICES BUSCADO POR SU ID, NO POR LE CAMPO CODE
     public function destroy($id)
     {
         // Buscar el registro del dispositivo por su ID
@@ -106,8 +146,5 @@ class DeviceController extends Controller
             return response('Impresión realizada con éxito', 200);
         }
     }
-
-
-
 
 }
