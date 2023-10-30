@@ -18,6 +18,7 @@ return new class extends Migration
             $table->String('model');
             $table->String('serie');
             $table->String('type_device'); // el dispositivo es laptop, impresora o PC
+            $table->String('status');
             $table->timestamps();
         });
     }
