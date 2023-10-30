@@ -57,6 +57,7 @@ class AuthController extends Controller
             $response = ['status' => 500, 'message' => $e->getMessage()];
             return response()->json($response);
         }
+        return response()->json($response);
     }
 
 }

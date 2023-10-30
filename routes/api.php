@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Route;
 Route::post('/register', [AuthController::class, 'Register']);
 //Acceder al sistema, genera un token
 Route::post('/login', [AuthController::class, 'login']);
+//Listar todos los equipos registrados
+Route::get('/listDevice', 'DeviceController@index');
 //Buscar un equipo por su codigo
 Route::get('/device/{code}',[DeviceController::class,'show']);
 //Listar los mantenimientos en un rango de fechas
@@ -24,14 +26,16 @@ Route::middleware('auth:sanctum')->group(function () {
     });
     //Cerrar Sesion
     Route::post('/logout', [AuthController::class, 'Logout']);
-    //Agregar registro de un equipo
-    //Route::post('/store-device', [DeviceController::class, 'store']);
+    //Agregar un dispositivo a la tabla devices
+    Route::post('/store-device', [DeviceController::class, 'store']);
+    //Modificar los datos registrados de un dispositivo
+    Route::put('/device/{code}', 'DeviceController@update');
     //Agregar registro de un mantenimiento
     Route::post('/store-maintenance', [MaintenanceController::class, 'store']);
     //Modificar datos de un mantenimineto
     Route::put('/maintenance/{id}', [MaintenanceController::class, 'updateMaintenance']);
     //🚩⚠Eliminar permanentemente el registro de un mantenimiento🚩⚠
-    //Route::delete('/delete-device/{id}', [DeviceController::class, 'destroy']);
+    Route::delete('/delete-device/{id}', [DeviceController::class, 'destroy']);
     //🚩⚠Eliminar permanentemente el registro de un dispositivo🚩⚠
     Route::delete('/delete-maintenance/{id}', [MaintenanceController::class, 'destroy']);
 
