@@ -35,7 +35,7 @@ Route::middleware('auth:sanctum')->group(function () {
     //Modificar datos de un mantenimineto
     Route::put('/maintenance/{id}', [MaintenanceController::class, 'updateMaintenance']);
     //🚩⚠Eliminar permanentemente el registro de un mantenimiento🚩⚠
-    Route::delete('/delete-device/{id}', [DeviceController::class, 'destroy']);
+    Route::delete('/delete-device/{code}', [DeviceController::class, 'destroy']);
     //🚩⚠Eliminar permanentemente el registro de un dispositivo🚩⚠
     Route::delete('/delete-maintenance/{id}', [MaintenanceController::class, 'destroy']);
 

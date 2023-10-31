@@ -17,8 +17,13 @@ return new class extends Migration
             $table->String('brand');
             $table->String('model');
             $table->String('serie');
-            $table->String('type_device'); // el dispositivo es laptop, impresora o PC
+            $table->String('type_device');
             $table->String('status');
+            $table->String('company');
+            /*$table->String('campus');
+            $table->String('windows_license')->nullable();
+            $table->String('microsoft_office_license')->nullable();
+            $table->String('corel_draw_license')->nullable();*/
             $table->timestamps();
         });
     }

@@ -45,8 +45,9 @@ class DeviceController extends Controller
 
     public function show($code)
     {
-        $devices = Device::select('brand', 'model', 'serie','type_device', 'status') // Se añade 'status'
-        ->where('code', $code)
+
+        $devices = Device::select('brand', 'model', 'serie','type_device', 'status')
+            ->where('code', $code)
             ->first();
 
         if($devices){
@@ -55,12 +56,14 @@ class DeviceController extends Controller
                 'devices' => $devices
             ], 200);
         } else {
+            \Log::warning("No se encontró dispositivo con el código: {$code}");
             return response()->json([
                 'status' => 404,
                 'message' => 'No hay equipo registrado con este código'
             ], 404);
         }
     }
+
 
     public function update(Request $request, $code)
     {
@@ -91,10 +94,10 @@ class DeviceController extends Controller
     }
 
     //ELIMINA EL REGISTRO DE UN  DISPOSITIVO EN LA TABLA DEVICES BUSCADO POR SU ID, NO POR LE CAMPO CODE
-    public function destroy($id)
+    public function destroy($code)
     {
-        // Buscar el registro del dispositivo por su ID
-        $device = Device::find($id);
+        // Buscar el registro del dispositivo por su código
+        $device = Device::where('code', $code)->first();
 
         // Verificar si el registro del dispositivo existe
         if(!$device) {
@@ -118,24 +121,30 @@ class DeviceController extends Controller
 
         // Buscar el dispositivo en la base de datos usando el campo 'code'
         $device = Device::where('code', $deviceCode)->firstOrFail();
+        $formatted_date = $device->created_at->format('d-m-Y');
 
-        // Generamos la fecha en el formato que necesitemos
-        $currentDate = date("Y-m-d");
-
-        // Concatenamos el código del dispositivo y la fecha para el QR
-        $qrData = "Code: {$device->code} | Date: {$currentDate}";
-
-        // Dinámicamente generar la cadena ZPL
         $zpl_string = "^XA
-       ^FO100,100
-       ^BQN,2,10
-       ^FDMA,{$device->code}^FS
-       ^FO100,300^A0N,50,50^FD{$device->code}^FS
-       ^FO100,400^A0N,50,50^FDBrand: {$device->brand}^FS
-       ^FO100,500^A0N,50,50^FDType: {$device->type_device}^FS
-       ^FO200,600^BQN,2,7
-       ^FDHA,{$qrData}^FS
-       ^XZ";
+    ^MMT
+    ^PW435
+    ^LL198
+    ^LS0
+    ^MD25  // Aumentar la oscuridad de la impresión
+
+    // Primera columna: Código QR
+    ^FO40,40
+    ^BQN,2,7
+    ^FDMA,{$device->code}^FS
+
+    // Segunda columna: Añadir 'MedImagen'
+    ^FO200,60^A0N,30,30^FDMedImagen^FS
+
+    // Segunda columna: Campo 'code', colocado debajo de 'MedImagen'
+    ^FO200,110^A0N,25,25^FD{$device->code}^FS
+
+    // Segunda columna: Campo 'created_at', colocado debajo del campo 'code'
+    ^FO200,150^A0N,25,25^FD{$formatted_date}^FS
+
+    ^PQ1,0,1,Y^XZ";
 
         // Enviar a la impresora (asumiendo conexión de red)
         $fp = fsockopen("192.168.0.219", 9100);
@@ -147,5 +156,6 @@ class DeviceController extends Controller
             return response('Impresión realizada con éxito', 200);
         }
     }
+
 
 }
