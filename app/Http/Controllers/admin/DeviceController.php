@@ -30,6 +30,7 @@ class DeviceController extends Controller
                 'serie' => 'required',
                 'type_device' => 'required',
                 'status' => 'required|string'
+                //'company'=> 'MedImagen'
             ]);
 
             if ($validator->fails()) {
@@ -45,7 +46,6 @@ class DeviceController extends Controller
 
     public function show($code)
     {
-
         $devices = Device::select('brand', 'model', 'serie','type_device', 'status')
             ->where('code', $code)
             ->first();
@@ -56,12 +56,13 @@ class DeviceController extends Controller
                 'devices' => $devices
             ], 200);
         } else {
-            \Log::warning("No se encontró dispositivo con el código: {$code}");
+            Log::warning("No se encontró dispositivo con el código: {$code}");
             return response()->json([
                 'status' => 404,
                 'message' => 'No hay equipo registrado con este código'
             ], 404);
         }
+
     }
 
 

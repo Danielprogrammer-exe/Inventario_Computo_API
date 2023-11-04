@@ -12,6 +12,7 @@ use Illuminate\Validation\Rule;
 
 class MaintenanceController extends Controller
 {
+    //Agregar un registro de mantenimiento
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -30,13 +31,13 @@ class MaintenanceController extends Controller
             'monitor' => 'required|boolean',
             'teclado' => 'required|boolean',
             'mouse' => 'required|boolean',
-            'desfragmentado_de_disco' => 'required|boolean',
-            'scandisk' => 'required|boolean',
+            'desfragmentado_de_disco_Scandisk' => 'required|boolean',
             'mantenimiento_de_archivos' => 'required|boolean',
             'asistente_para_quitar_programas' => 'required|boolean',
             'eliminacion_de_archivos_temporales' => 'required|boolean',
             'eliminacion_de_cookies_y_archivos_temporales' => 'required|boolean',
-            'analisis_con_antivirus_antiSpyware' => 'required|boolean',
+            'analisis_con_antivirus' => 'required|boolean',
+            'antiSpyware' => 'required|boolean',
             'analisis_de_registro' => 'required|boolean',
             'prueba_de_impresion_antes_del_mantenimiento' => 'required|boolean',
             'impresion_pagina_de_configuracion' => 'required|boolean',
@@ -113,6 +114,7 @@ class MaintenanceController extends Controller
         }
     }
 
+    //Modificar mantenimiento
     public function updateMaintenance(Request $request, $id)
     {
         try {

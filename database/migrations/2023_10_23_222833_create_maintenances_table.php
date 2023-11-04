@@ -28,13 +28,13 @@ return new class extends Migration
             $table->boolean('monitor')->default(false);
             $table->boolean('teclado')->default(false);
             $table->boolean('mouse')->default(false);
-            $table->boolean('desfragmentado_de_disco')->default(false);
-            $table->boolean('scandisk')->default(false);
+            $table->boolean('desfragmentado_de_disco_scandisk')->default(false);
             $table->boolean('mantenimiento_de_archivos')->default(false);
             $table->boolean('asistente_para_quitar_programas')->default(false);
             $table->boolean('eliminacion_de_archivos_temporales')->default(false);
             $table->boolean('eliminacion_de_cookies_y_archivos_temporales')->default(false);
-            $table->boolean('analisis_con_antivirus_antiSpyware')->default(false);
+            $table->boolean('analisis_con_antivirus')->default(false);
+            $table->boolean('antiSpyware')->default(false);
             $table->boolean('analisis_de_registro')->default(false);
             $table->boolean('prueba_de_impresion_antes_del_mantenimiento')->default(false);
             $table->boolean('impresion_pagina_de_configuracion')->default(false);
@@ -49,7 +49,6 @@ return new class extends Migration
         });
     }
 
-
     /**
      * Reverse the migrations.
      */
@@ -57,4 +56,5 @@ return new class extends Migration
     {
         Schema::dropIfExists('maintenances');
     }
+
 };
