@@ -12,42 +12,16 @@ use Illuminate\Validation\Rule;
 
 class MaintenanceController extends Controller
 {
+
     //Agregar un registro de mantenimiento
     public function store(Request $request)
     {
+        if (empty($request->status)) {
+            $request->merge(['status' => '1']);
+        }
+
         $validator = Validator::make($request->all(), [
             'code_device' => 'required|string',
-            'status' => [
-                'required',
-                Rule::in(['Operativo', 'Operativo con fallas', 'No operativo']),
-            ],
-            'soplado_general' => 'boolean',
-            'ventiladores' => 'boolean',
-            'disipador_del_procesador' => 'boolean',
-            'ranuras_de_expansion' => 'boolean',
-            'tarjetas_de_memoria' => 'boolean',
-            'fuente_de_poder' => 'boolean',
-            'lectora_de_CD_DVD' => 'boolean',
-            'monitor' => 'boolean',
-            'teclado' => 'boolean',
-            'mouse' => 'boolean',
-            'desfragmentado_de_disco_Scandisk' => 'boolean',
-            'mantenimiento_de_archivos' => 'boolean',
-            'asistente_para_quitar_programas' => 'boolean',
-            'eliminacion_de_archivos_temporales' => 'boolean',
-            'eliminacion_de_cookies_y_archivos_temporales' => 'boolean',
-            'analisis_con_antivirus' => 'boolean',
-            'antiSpyware' => 'boolean',
-            'analisis_de_registro' => 'boolean',
-            'prueba_de_impresion_antes_del_mantenimiento' => 'boolean',
-            'impresion_pagina_de_configuracion' => 'boolean',
-            'verificacion_del_contador_de_paginas_impresas' => 'boolean',
-            'verificacion_del_estado_de_los_consumibles' => 'boolean',
-            'limpieza_de_los_consumibles' => 'boolean',
-            'verificacion_de_los_mecanismos_de_impresion' => 'boolean',
-            'limpieza_de_los_mecanismos_de_impresion' => 'boolean',
-            'limpieza_externa_del_equipo' => 'boolean',
-            'prueba_de_impresion_despues_del_mantenimiento' => 'boolean'
         ]);
 
         if ($validator->fails()) {
@@ -57,10 +31,22 @@ class MaintenanceController extends Controller
             ], 422);
         }
 
+        // Validación para verificar si ya se ha agregado un mantenimiento hoy
+        $existingMaintenance = Maintenance::where('code_device', $request->code_device)
+            ->whereDate('created_at', Carbon::today())
+            ->first();
+
+        if ($existingMaintenance) {
+            return response()->json([
+                'status' => 422,
+                'message' => 'No se puede dar mas de 1 mantenimiento al mismo dispositivo por dia. Si algo falló, modificar el mantenimiento en la seccion de [Mis mantenimientos].'
+            ], 422);
+        }
+
         $loggedInUser = Auth::user()->name;
         $maintenance = new Maintenance();
         $maintenance->fill($request->all());
-        // Establecer valores por defecto para los campos booleanos si no están presentes en la solicitud
+
         $booleanFields = [
             'soplado_general',
             'ventiladores',
@@ -92,9 +78,8 @@ class MaintenanceController extends Controller
         ];
 
         foreach ($booleanFields as $field) {
-            if (!$maintenance->isDirty($field)) {
-                $maintenance->{$field} = false;
-            }
+            // Si el campo existe en la solicitud, establece su valor en true; de lo contrario, en false
+            $maintenance->{$field} = $request->has($field);
         }
 
         $maintenance->name_user = $loggedInUser;
@@ -108,12 +93,12 @@ class MaintenanceController extends Controller
         ], 200);
     }
 
+
     public function listByDateRange(Request $request)
     {
-
         try {
-            $from = Carbon::createFromFormat('d-m-Y', $request->input('from'))->format('Y-m-d');
-            $to = Carbon::createFromFormat('d-m-Y', $request->input('to'))->format('Y-m-d');
+            $from = Carbon::createFromFormat('d-m-Y', $request->query('from'))->format('Y-m-d');
+            $to = Carbon::createFromFormat('d-m-Y', $request->query('to'))->format('Y-m-d');
 
             $maintenances = Maintenance::whereBetween('created_at', [$from, $to])->get();
 

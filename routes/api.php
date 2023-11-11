@@ -15,7 +15,7 @@ Route::get('/listDevice', 'App\Http\Controllers\admin\DeviceController@index');
 //Buscar un equipo por su codigo
 Route::get('/device/{code}',[DeviceController::class,'show']);
 //Listar los mantenimientos en un rango de fechas
-Route::post('/maintenanceslistbydaterange', [MaintenanceController::class, 'listByDateRange']);
+Route::get('/maintenanceslistbydaterange', [MaintenanceController::class, 'listByDateRange']);
 //IMPRIMIR EN TICKETERA ZEBRA ZD230
 Route::post('/print', [DeviceController::class, 'printDeviceLabel']);
 
