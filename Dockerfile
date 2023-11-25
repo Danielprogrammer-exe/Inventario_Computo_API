@@ -1,21 +1,15 @@
-# Usa una imagen de PHP con Apache
-FROM php:7.4-apache
+# Usa la imagen oficial de PHP con Apache
+FROM php:8.0-apache
 
-# Establece el directorio de trabajo en /var/www/html
+# Establece el directorio de trabajo en el contenedor
 WORKDIR /var/www/html
 
-# Copia el contenido del directorio actual al contenedor en /var/www/html
+# Copia los archivos del proyecto al contenedor
 COPY . /var/www/html
 
-# Instala las dependencias necesarias
-RUN apt-get update && apt-get install -y \
-    libzip-dev \
-    unzip \
-    && docker-php-ext-install zip pdo_mysql \
-    && a2enmod rewrite
+# Instala las extensiones necesarias de PHP
+RUN docker-php-ext-install pdo pdo_mysql
 
-# Exponer el puerto 80 para Apache
-EXPOSE 80
-
-# Comando para ejecutar el servidor Apache en primer plano
-CMD ["apache2-foreground"]
+# Configuración de Apache
+RUN a2enmod rewrite
+RUN service apache2 restart
