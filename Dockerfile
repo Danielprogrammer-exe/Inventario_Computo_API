@@ -27,8 +27,8 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg && \
     docker-php-ext-install gd pdo pdo_mysql
 
-# Exponer el puerto 80
-EXPOSE 80
+# Exponer el puerto 81
+EXPOSE 81
 
 # Inicia Apache cuando se ejecute el contenedor
 CMD ["apache2-foreground"]
