@@ -17,9 +17,9 @@ class Device extends Model
         'model',
         'serie',
         'type_device',
-        'status'
-        /*'company'
-        'campus'(sede)
+        'status',
+        'company'
+        /*'campus'(sede)
         'invoice code'(codigo de factura)
         'windows_license'
         'micrsoft_office_license'

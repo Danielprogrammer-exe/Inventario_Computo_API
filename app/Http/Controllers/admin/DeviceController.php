@@ -22,15 +22,15 @@ class DeviceController extends Controller
     public function store(Request $request)
     {
         if (Auth::check()) {
-            // Validaciones de los campos, añadiendo el campo 'status'
+            // Validaciones de los campos
             $validator = Validator::make($request->all(), [
                 'code' => 'required|unique:devices,code',
                 'brand' => 'required',
                 'model' => 'required',
                 'serie' => 'required',
                 'type_device' => 'required',
-                'status' => 'required|string'
-                //'company'=> 'MedImagen'
+                'status' => 'required|string',
+                'company'=> 'required|string'
             ]);
 
             if ($validator->fails()) {
@@ -44,6 +44,7 @@ class DeviceController extends Controller
         }
     }
 
+    //MUESTRA UN DISPOSITIVO DE LA TABLA DEVICES POR SU CODIGO
     public function show($code)
     {
         $devices = Device::select('brand', 'model', 'serie','type_device', 'status')
@@ -56,7 +57,6 @@ class DeviceController extends Controller
                 'devices' => $devices
             ], 200);
         } else {
-            Log::warning("No se encontró dispositivo con el código: {$code}");
             return response()->json([
                 'status' => 404,
                 'message' => 'No hay equipo registrado con este código'
@@ -65,7 +65,7 @@ class DeviceController extends Controller
 
     }
 
-
+    //EDITAR DATOS DE UN DISPOSITIVO
     public function update(Request $request, $code)
     {
         if (Auth::check()) {
@@ -80,7 +80,8 @@ class DeviceController extends Controller
                 'model' => 'sometimes|required',
                 'serie' => 'sometimes|required',
                 'type_device' => 'sometimes|required',
-                'status' => 'sometimes|required|string' // Se añade 'status'
+                'status' => 'sometimes|required|string',
+                'company'=> 'required|string'
             ]);
 
             if ($validator->fails()) {
@@ -116,6 +117,7 @@ class DeviceController extends Controller
     }
 
     //FUNCION PARA IMPRIMIR EN TICKETERA ZEBRA ZD230
+    //FUNCIONA EN ZEBRA GK420T
     public function printDeviceLabel(Request $request) {
         // Obtener el código del dispositivo de la solicitud
         $deviceCode = $request->get('code');
@@ -136,10 +138,9 @@ class DeviceController extends Controller
     ^BQN,2,7
     ^FDMA,{$device->code}^FS
 
-    // Segunda columna: Añadir 'MedImagen'
-    ^FO200,60^A0N,30,30^FDMedImagen^FS
+    // Imprimir campo de la empresa (company)
+    ^FO200,60^A0N,30,30^FD{$device->company}^FS
 
-    // Segunda columna: Campo 'code', colocado debajo de 'MedImagen'
     ^FO200,110^A0N,25,25^FD{$device->code}^FS
 
     // Segunda columna: Campo 'created_at', colocado debajo del campo 'code'
@@ -147,7 +148,7 @@ class DeviceController extends Controller
 
     ^PQ1,0,1,Y^XZ";
 
-        // Enviar a la impresora (asumiendo conexión de red)
+        // Enviar a la impresora (conexión a red)
         $fp = fsockopen("192.168.0.219", 9100);
         if (!$fp) {
             return response('No se pudo conectar con la impresora', 500);
@@ -157,6 +158,5 @@ class DeviceController extends Controller
             return response('Impresión realizada con éxito', 200);
         }
     }
-
 
 }

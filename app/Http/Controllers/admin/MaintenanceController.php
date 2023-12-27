@@ -17,7 +17,6 @@ class MaintenanceController extends Controller
     //Agregar un registro de mantenimiento
     public function store(Request $request)
     {
-        \Log::info('MANTENIMIENTO NUEVO:', $request->all());
         if (empty($request->status)) {
             $request->merge(['status' => '1']);
         }
@@ -131,7 +130,6 @@ class MaintenanceController extends Controller
     //Modificar mantenimiento
     public function updateMaintenance(Request $request, $id)
     {
-        \Log::info('Datos recibidos en updateMaintenance:', $request->all());
         // Busca el mantenimiento existente por su ID
         $maintenance = Maintenance::find($id);
 
