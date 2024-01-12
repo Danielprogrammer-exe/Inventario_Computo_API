@@ -40,5 +40,4 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/delete-device/{code}', [DeviceController::class, 'destroy']);
     //🚩⚠Eliminar permanentemente el registro de un dispositivo🚩⚠
     Route::delete('/delete-maintenance/{id}', [MaintenanceController::class, 'destroy']);
-
 });

@@ -127,13 +127,13 @@ class DeviceController extends Controller
         $formatted_date = $device->created_at->format('d-m-Y');
 
         $zpl_string = "^XA
-    ^MMT
-    ^PW435
-    ^LL198
-    ^LS0
-    ^MD25  // Aumentar la oscuridad de la impresión
+    ^MMT //Establece modo de impresion térmica
+    ^PW435 //Establecer el ancho de impresión en puntos (dots). Se configura en 435 puntos
+    ^LL198 //Establece la longitud de la etiqueta en puntos. Se configura en 198 puntos.
+    ^LS0 // Determina cómo se ajusta la longitud de la etiqueta al imprimir una nueva. Se mantiene constante.
+    ^MD25  // Oscuridad de la impresión
 
-    // Primera columna: Código QR
+    // Imprimir y generar codigo QR
     ^FO40,40
     ^BQN,2,7
     ^FDMA,{$device->code}^FS
@@ -143,7 +143,7 @@ class DeviceController extends Controller
 
     ^FO200,110^A0N,25,25^FD{$device->code}^FS
 
-    // Segunda columna: Campo 'created_at', colocado debajo del campo 'code'
+    // Imprimir fecha de cuando fue registrado en la base de datos
     ^FO200,150^A0N,25,25^FD{$formatted_date}^FS
 
     ^PQ1,0,1,Y^XZ";
