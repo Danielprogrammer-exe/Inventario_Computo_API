@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('repairs', function (Blueprint $table) {
             $table->id();
+            $table->string('code_device');
+            $table->string('name_user');
             $table->text('diagnosis');
             $table->text('solution');
             $table->boolean('final_situation')->default(false);

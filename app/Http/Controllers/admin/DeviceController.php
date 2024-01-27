@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Auth;
 
 class DeviceController extends Controller
 {
+    // LISTAR LOS MANTENIMIENTOS REGISTRADOS POR EL CODIGO DEL DISPOSITIVO
+
     //LISTA TODOS LOS DISPOSITIVOS REGISTRADOS
     public function index()
     {
@@ -44,10 +46,10 @@ class DeviceController extends Controller
         }
     }
 
-    //MUESTRA UN DISPOSITIVO DE LA TABLA DEVICES POR SU CODIGO
+    //MUESTRA UN DISPOSITIVO DE LA TABLA DEVICES POR SU CODIGO, no por su ID
     public function show($code)
     {
-        $devices = Device::select('brand', 'model', 'serie','type_device', 'status')
+        $devices = Device::select('type_device','brand', 'model', 'serie', 'status', 'company','area','user')
             ->where('code', $code)
             ->first();
 

@@ -34,13 +34,13 @@ class MaintenanceController extends Controller
 
         // Validación para verificar si ya se ha agregado un mantenimiento hoy
         $existingMaintenance = Maintenance::where('code_device', $request->code_device)
-            ->whereDate('created_at', Carbon::today())
+            ->where('created_at', '>=', Carbon::now()->subMonths(1))
             ->first();
 
         if ($existingMaintenance) {
             return response()->json([
                 'status' => 422,
-                'error' => 'No se puede dar mas de 1 mantenimiento al mismo dispositivo por dia. Si algo falló, modificar el mantenimiento en la seccion de [Mis mantenimientos].'
+                'error' => 'Ya se dio mantenimiento a este dispositivo. Si desea modificarlo, ingrese a la seccion [Mis mantenimientos].'
             ], 422);
         }
 
@@ -110,22 +110,23 @@ class MaintenanceController extends Controller
         }
     }
 
-    public function getMaintenancesById($id)
-    {
-        $maintenances = Maintenance::where('id', $id)->get();
+    //Obtener todos los mantenimientos registrados, buscandolos por el codigo del dispositivo, no por id
+    public function getMaintenancesByCodeDevice($codeDevice) // //////////////////////////////////////////////$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$********
+{
+    $maintenances = Maintenance::where('code_device', $codeDevice)->get();
 
-        if ($maintenances->isEmpty()) {
-            return response()->json([
-                'status' => 404,
-                'message' => 'No existe mantenimiento con ese ID.'
-            ], 404);
-        }
-
+    if ($maintenances->isEmpty()) {
         return response()->json([
-            'status' => 200,
-            'maintenances' => $maintenances,
-        ], 200);
+            'status' => 404,
+            'message' => 'No existen mantenimientos con ese código de dispositivo.'
+        ], 404);
     }
+
+    return response()->json([
+        'status' => 200,
+        'maintenances' => $maintenances,
+    ], 200);
+}
 
     //Modificar mantenimiento
     public function updateMaintenance(Request $request, $id)
