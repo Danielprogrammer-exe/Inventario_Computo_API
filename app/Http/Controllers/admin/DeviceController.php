@@ -31,7 +31,7 @@ class DeviceController extends Controller
                 'model' => 'required',
                 'serie' => 'required',
                 'type_device' => 'required',
-                'status' => 'required|string',
+                'status_device' => 'required|string',
                 'company'=> 'required|string'
             ]);
 
@@ -49,7 +49,7 @@ class DeviceController extends Controller
     //MUESTRA UN DISPOSITIVO DE LA TABLA DEVICES POR SU CODIGO, no por su ID
     public function show($code)
     {
-        $devices = Device::select('type_device','brand', 'model', 'serie', 'status', 'company','area','user')
+        $devices = Device::select('type_device','brand', 'model', 'serie', 'status_device', 'company','area','user')
             ->where('code', $code)
             ->first();
 
@@ -82,7 +82,7 @@ class DeviceController extends Controller
                 'model' => 'sometimes|required',
                 'serie' => 'sometimes|required',
                 'type_device' => 'sometimes|required',
-                'status' => 'sometimes|required|string',
+                'status_device' => 'sometimes|required|string',
                 'company'=> 'required|string'
             ]);
 

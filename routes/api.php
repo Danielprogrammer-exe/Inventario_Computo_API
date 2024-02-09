@@ -3,6 +3,7 @@
 use App\Http\Controllers\admin\AuthController;
 use App\Http\Controllers\admin\MaintenanceController;
 use App\Http\Controllers\admin\DeviceController;
+use App\Http\Controllers\admin\RepairController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -25,7 +26,7 @@ Route::post('/print', [DeviceController::class, 'printDeviceLabel']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
         // Su lógica aquí
-    });
+    }); 
     //Cerrar Sesion
     Route::post('/logout', [AuthController::class, 'Logout']);
     //Agregar un dispositivo a la tabla devices
@@ -40,4 +41,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/delete-device/{code}', [DeviceController::class, 'destroy']);
     //🚩⚠Eliminar permanentemente el registro de un dispositivo🚩⚠
     Route::delete('/delete-maintenance/{id}', [MaintenanceController::class, 'destroy']);
+    //Agregar registro de una reparacion
+    Route::post('/store-repair', [RepairController::class, 'store']);
 });

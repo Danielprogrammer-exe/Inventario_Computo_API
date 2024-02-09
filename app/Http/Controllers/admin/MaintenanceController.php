@@ -32,7 +32,7 @@ class MaintenanceController extends Controller
             ], 422);
         }
 
-        // Validación para verificar si ya se ha agregado un mantenimiento hoy
+        // Validación para verificar si ya se ha agregado un mantenimiento este mes
         $existingMaintenance = Maintenance::where('code_device', $request->code_device)
             ->where('created_at', '>=', Carbon::now()->subMonths(1))
             ->first();
