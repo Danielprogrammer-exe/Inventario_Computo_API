@@ -69,33 +69,44 @@ class DeviceController extends Controller
 
     //EDITAR DATOS DE UN DISPOSITIVO
     public function update(Request $request, $code)
-    {
-        if (Auth::check()) {
-            $device = Device::where('code', $code)->first();
-            if (!$device) {
-                return response()->json(['error' => 'Dispositivo no encontrado'], 404);
-            }
-
-            $validator = Validator::make($request->all(), [
-                'code' => 'sometimes|unique:devices,code,' . $device->id,
-                'brand' => 'sometimes|required',
-                'model' => 'sometimes|required',
-                'serie' => 'sometimes|required',
-                'type_device' => 'sometimes|required',
-                'status_device' => 'sometimes|required|string',
-                'company'=> 'required|string'
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json(['error' => $validator->errors()], 400);
-            }
-
-            $device->update($request->all());
-            return response()->json(['message' => 'Dispositivo actualizado exitosamente', 'data' => $device], 200);
-        } else {
-            return response()->json(['error' => 'No autorizado'], 401);
+{
+    if (Auth::check()) {
+        $device = Device::where('code', $code)->first();
+        if (!$device) {
+            return response()->json(['error' => 'Dispositivo no encontrado'], 404);
         }
+
+        // Validar solo los campos que se proporcionan en la solicitud
+        $validator = Validator::make($request->all(), [
+            'code' => 'sometimes|required ',
+            'brand' => 'sometimes|required',
+            'model' => 'sometimes|required',
+            'serie' => 'sometimes|required',
+            'type_device' => 'sometimes|required',
+            'status_device' => 'sometimes|required|string',
+            'company'=> 'sometimes|required|string',
+            'area' => 'sometimes|required|string',
+            'user' => 'sometimes|required|string'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 400);
+        }
+
+        // Actualizar los campos del dispositivo con los valores de la solicitud
+        $device->fill($request->only([
+            'code', 'brand', 'model', 'serie', 'type_device', 'status_device', 'company', 'area', 'user'
+        ]));
+
+        // Guardar el dispositivo actualizado en la base de datos
+        $device->save();
+
+        return response()->json(['message' => 'Dispositivo actualizado exitosamente', 'data' => $device], 200);
+    } else {
+        return response()->json(['error' => 'No autorizado'], 401);
     }
+}
+
 
     //ELIMINA EL REGISTRO DE UN  DISPOSITIVO EN LA TABLA DEVICES BUSCADO POR SU ID, NO POR LE CAMPO CODE
     public function destroy($code)
