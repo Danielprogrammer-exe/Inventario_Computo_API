@@ -104,6 +104,10 @@ class MaintenanceController extends Controller
                 ->whereDate('created_at', '<=', $to)
                 ->get();
 
+                if ($maintenances->isEmpty()) {
+                    return response()->json(['status' => 200, 'message' => 'No hay mantenimientos registrados en el rango de fechas seleccionados.'], 200);
+                }
+
             return response()->json(['status' => 200, 'maintenances' => $maintenances], 200);
         } catch (\Exception $e) {
             return response()->json(['status' => 500, 'message' => 'Error en el formato de la fecha'], 500);

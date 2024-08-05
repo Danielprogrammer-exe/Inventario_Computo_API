@@ -19,8 +19,12 @@ Route::get('/device/{code}',[DeviceController::class,'show']);
 Route::get('/maintenance/{code_device}',[MaintenanceController::class,'getMaintenancesByCodeDevice']);
 //Listar los mantenimientos en un rango de fechas
 Route::get('/maintenanceslistbydaterange', [MaintenanceController::class, 'listByDateRange']);
+//Listar las reparaciones en un rango de fechas
+Route::get('/repairslistbydaterange', [RepairController::class, 'listRepairsByDateRange']);
 //IMPRIMIR EN TICKETERA ZEBRA ZD230
 Route::post('/print', [DeviceController::class, 'printDeviceLabel']);
+//Listar mantenimientos y reparaciones en un rango de fecha
+Route::get('/listCombinedData', [RepairController::class, 'getCombinedData']);
 
 //APIS Que necesitan autenticacion para ser ejecutadas
 Route::middleware('auth:sanctum')->group(function () {

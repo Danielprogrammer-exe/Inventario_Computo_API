@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Maintenance;
 use Illuminate\Http\Request;
 use App\Models\Repair;
 use Carbon\Carbon;
@@ -57,5 +58,46 @@ class RepairController extends Controller
         ], 200);
     }
     
+    public function listRepairsByDateRange(Request $request)
+            {
+    try {
+        $from = Carbon::createFromFormat('d-m-Y', $request->query('from'))->format('Y-m-d');
+        $to = Carbon::createFromFormat('d-m-Y', $request->query('to'))->format('Y-m-d');
+
+        $repairs = Repair::whereDate('created_at', '>=', $from)
+            ->whereDate('created_at', '<=', $to)
+            ->get();
+
+        if ($repairs->isEmpty()) {
+            return response()->json(['status' => 200, 'message' => 'No hay reparaciones registradas en el rango de fechas seleccionados.'], 200);
+        }
+
+        return response()->json(['status' => 200, 'repairs' => $repairs], 200);
+    } catch (\Exception $e) {
+        return response()->json(['status' => 500, 'message' => 'Error en el formato de la fecha'], 500);
+    }
+    }
+
+    /*public function getCombinedData(Request $request)
+    {
+        try{
+        // Validar las fechas de inicio y fin del rango
+        $from = Carbon::createFromFormat('d-m-Y', $request->query('from'))->format('Y-m-d');
+        $to = Carbon::createFromFormat('d-m-Y', $request->query('to'))->format('Y-m-d');
+
+        // Obtener datos de mantenimientos y reparaciones dentro del rango de fechas
+        $maintenances = Maintenance::whereBetween('created_at', [$from, $to])->get();
+        $repairs = Repair::whereBetween('created_at', [$from, $to])->get();
+
+        // Combinar y ordenar los datos
+        $combined = $maintenances->merge($repairs)->sortBy('created_at')->values();
+
+        // Devolver la respuesta en formato JSON
+        return response()->json(['status' => 200, 'combined' => $combined],200);
+
+    } catch (\Exception $e){
+        return response() ->json((['status'=> 500, 'message' => 'Error en el formato de la fecha']), 500);
+    }
+    }*/
 
 }
